@@ -1,0 +1,615 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EndoVision - AI Based Ulcer Detection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f4fff8;
+      color: #1e3d2f;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .fade-in-section {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity, transform;
+    }
+
+    .fade-in-section.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    header {
+      background: linear-gradient(135deg, #0b5d3b, #2e8b57);
+      color: white;
+      padding: 20px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-logo i {
+      font-size: 32px;
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 10px rgba(0, 230, 118, 0.4));
+      transform: rotate(-10deg);
+    }
+
+    .logo-endo {
+      color: white;
+    }
+
+    .logo-vision {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: #00e676;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    nav ul li a:hover {
+      color: #00e676;
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .auth-buttons a {
+      text-decoration: none;
+      padding: 8px 22px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+
+    .btn-login {
+      color: white;
+      background: transparent;
+      border: 2px solid white;
+    }
+
+    .btn-login:hover, .btn-login:focus-visible {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      outline: 2px solid rgba(255,255,255,0.6);
+      outline-offset: 3px;
+    }
+
+    .btn-register {
+      background: white;
+      color: #0b5d3b;
+      border: 2px solid white;
+    }
+
+    .btn-register:hover, .btn-register:focus-visible {
+      background: #eafbf0;
+      border-color: #eafbf0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      outline: 2px solid rgba(255,255,255,0.6);
+      outline-offset: 3px;
+    }
+
+    .hero {
+      height: 90vh;
+      background: linear-gradient(to right, rgba(2, 20, 10, 0.92), rgba(11, 70, 40, 0.75)),
+      url('{{ url_for("static", filename="images/hero_capsule_bg.png") }}');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 20px;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .hero h2 {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .hero button {
+      background: linear-gradient(135deg, #00e676, #00d4ff);
+      color: #003314;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 40px;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(0, 230, 118, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero button:hover, .hero button:focus-visible {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 30px rgba(0, 230, 118, 0.6);
+      outline: 2px solid #00e676;
+      outline-offset: 4px;
+    }
+
+    section {
+      padding: 80px 8%;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 38px;
+      color: #0b5d3b;
+      margin-bottom: 50px;
+    }
+
+    .about {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .about-text, .about-image {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .about-lead {
+      font-size: 18px;
+      margin-bottom: 25px;
+      color: #1e3d2f;
+      line-height: 1.7;
+    }
+
+    .about-benefits {
+      list-style: none;
+      display: grid;
+      gap: 20px;
+    }
+
+    .about-benefits li {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-benefits li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 6px;
+      background: linear-gradient(to bottom, #00d4ff, #00e676);
+    }
+
+    .about-benefits li:hover {
+      transform: translateX(10px) translateY(-3px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    }
+
+    .about-benefits i {
+      background: #eafbf0;
+      min-width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: #0b5d3b;
+      box-shadow: 0 4px 10px rgba(11, 93, 59, 0.1);
+    }
+    
+    .about-benefits strong {
+      display: block;
+      color: #0b5d3b;
+      font-size: 19px;
+      margin-bottom: 6px;
+    }
+
+    .about-benefits .benefit-text {
+      color: #2e8b57;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .about-image img {
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .card img {
+      width: 80px;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      color: #2e7d32;
+      margin-bottom: 15px;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .gallery-item {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: 0.3s;
+      text-align: center;
+      padding-bottom: 15px;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.08);
+    }
+
+    .gallery-item h3 {
+      color: #0b5d3b;
+      font-size: 18px;
+      margin-top: 15px;
+      font-weight: 600;
+      padding: 0 10px;
+    }
+
+    .modern-footer {
+      background: #052b1b;
+      color: #c7f7d4;
+      padding: 60px 8% 20px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand h3 {
+      font-size: 24px;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .footer-brand p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #9cdbaf;
+    }
+
+    .footer-links h4, .footer-contact h4 {
+      font-size: 18px;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: #9cdbaf;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #00e676;
+    }
+
+    .footer-contact p {
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .footer-contact i {
+      margin-right: 10px;
+      color: #00e676;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+      color: #6c9982;
+    }
+
+    @media(max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .hero h2 {
+        font-size: 36px;
+      }
+
+      nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand-logo">
+      <i class="fa-solid fa-capsules"></i>
+      <div><span class="logo-endo">Endo</span><span class="logo-vision">Vision</span></div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <a href="/login" class="btn-login">Login</a>
+      <a href="/register" class="btn-register">Register</a>
+      <a href="/dashboard" class="btn-login">Dashboard</a>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="hero-content fade-in-section">
+      <h2>AI Based Ulcer Detection in Capsule Endoscopy</h2>
+      <p>
+        EndoVision helps doctors analyse thousands of endoscopy images quickly and accurately using advanced deep learning and CNN-based ulcer detection.
+      </p>
+      <button onclick="window.location.href='/dashboard'">Upload & Analyze Scan <i class="fa-solid fa-cloud-arrow-up" style="margin-left: 8px;"></i></button>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2 class="section-title">About EndoVision</h2>
+    <div class="about">
+      <div class="about-text fade-in-section">
+        <p class="about-lead">
+          <strong>EndoVision</strong> is an advanced AI-powered diagnostic system designed to automate and enhance the detection of ulcers from capsule endoscopy imagery.
+        </p>
+
+        <ul class="about-benefits">
+          <li>
+            <i class="fa-solid fa-brain"></i>
+            <div>
+              <strong>Deep Learning Models</strong>
+              <div class="benefit-text">Identifies ulcerous anomalies with unprecedented clinical accuracy using state-of-the-art diagnostic image processing.</div>
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-microscope"></i>
+            <div>
+              <strong>Automated Analysis</strong>
+              <div class="benefit-text">Rapidly scans through the staggering 50,000+ frames required for a single patient study in minutes.</div>
+            </div>
+          </li>
+          <li>
+            <i class="fa-solid fa-stethoscope"></i>
+            <div>
+              <strong>Reduced Workload</strong>
+              <div class="benefit-text">Automatically highlights suspicious frames, significantly reducing manual review intervals and improving clinical outcomes.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="about-image fade-in-section" style="transition-delay: 0.15s;">
+        <img src="{{ url_for('static', filename='images/about_ai_scan.png') }}" alt="Medical AI">
+      </div>
+    </div>
+  </section>
+
+
+
+  <section id="gallery">
+    <h2 class="section-title">Medical Gallery</h2>
+
+    <div class="gallery">
+      <div class="gallery-item fade-in-section">
+        <img src="{{ url_for('static', filename='images/gallery_pill_camera.png') }}" alt="High-tech Medical Capsule">
+        <h3>Medical Capsule</h3>
+      </div>
+      <div class="gallery-item fade-in-section">
+        <img src="{{ url_for('static', filename='images/gallery_digestive_scan.png') }}" alt="Digital Digestive System Scan">
+        <h3>Digestive Scan Analysis</h3>
+      </div>
+      <div class="gallery-item fade-in-section">
+        <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80" alt="Medical Analysis">
+        <h3>Clinical Assessment</h3>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact" class="modern-footer fade-in-section">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3><i class="fa-solid fa-notes-medical"></i> EndoVision</h3>
+        <p>Advanced Deep Learning CNN-based diagnostic system for high-accuracy ulcer detection in capsule endoscopy imagery.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/#about">About Platform</a></li>
+          <li><a href="/dashboard">Staff Dashboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact Info</h4>
+        <p><i class="fa-solid fa-envelope"></i> admin@endovision.ai</p>
+        <p><i class="fa-solid fa-phone"></i> +1 (800) MED-DIGI</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 EndoVision Medical Systems. Clinical portal secured.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            // Stop observing once animated in
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      const hiddenElements = document.querySelectorAll('.fade-in-section');
+      hiddenElements.forEach((el) => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
+

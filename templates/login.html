@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - EndoVision</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f4fff8;
+      color: #1e3d2f;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .fade-in-section {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity, transform;
+    }
+
+    .fade-in-section.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    header {
+      background: linear-gradient(135deg, #0b5d3b, #2e8b57);
+      color: white;
+      padding: 20px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-logo i {
+      font-size: 32px;
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 10px rgba(0, 230, 118, 0.4));
+      transform: rotate(-10deg);
+    }
+
+    .logo-endo {
+      color: white;
+    }
+
+    .logo-vision {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: #00e676;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    nav ul li a:hover {
+      color: #00e676;
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .auth-buttons a {
+      text-decoration: none;
+      padding: 8px 22px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+
+    .btn-login {
+      color: white;
+      background: transparent;
+      border: 2px solid white;
+    }
+
+    .btn-login:hover, .btn-login:focus-visible {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      outline: 2px solid rgba(255,255,255,0.6);
+      outline-offset: 3px;
+    }
+
+    .btn-register {
+      background: white;
+      color: #0b5d3b;
+      border: 2px solid white;
+    }
+
+    .btn-register:hover, .btn-register:focus-visible {
+      background: #eafbf0;
+      border-color: #eafbf0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      outline: 2px solid rgba(255,255,255,0.6);
+      outline-offset: 3px;
+    }
+
+    /* Login Specific Styles */
+    .auth-container {
+      min-height: calc(100vh - 86px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      background: url('{{ url_for("static", filename="images/hero_capsule_bg.png") }}');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .auth-container::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(2, 20, 10, 0.95), rgba(11, 93, 59, 0.75));
+    }
+
+    .auth-card {
+      width: 420px;
+      padding: 40px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes pulseIcon {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); color: #00e676; }
+      100% { transform: scale(1); }
+    }
+
+    .auth-icon i {
+      animation: pulseIcon 3s infinite;
+      display: inline-block;
+    }
+
+    .auth-icon {
+      font-size: 38px;
+      color: #0b5d3b;
+      margin-bottom: 20px;
+    }
+
+    .auth-card h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: #0b5d3b;
+    }
+
+    .auth-card p {
+      color: #1e3d2f;
+      margin-bottom: 30px;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: center;
+      background: #f4fff8;
+      border: 1px solid rgba(11, 93, 59, 0.2);
+      border-radius: 30px;
+      padding: 14px 20px;
+      margin-bottom: 18px;
+      transition: 0.3s;
+    }
+
+    .input-box:focus-within {
+      border-color: #0b5d3b;
+      box-shadow: 0 0 0 3px rgba(11, 93, 59, 0.2);
+      background: #ffffff;
+    }
+
+    .input-box i {
+      color: #0b5d3b;
+      margin-right: 12px;
+    }
+
+    .input-box input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #1e3d2f;
+      font-size: 15px;
+    }
+
+    .input-box input::placeholder {
+      color: #6c9982;
+    }
+
+    .auth-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 25px;
+      color: #1e3d2f;
+    }
+
+    .auth-options a,
+    .bottom-text a {
+      color: #2e8b57;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .auth-options a:hover,
+    .bottom-text a:hover {
+      text-decoration: underline;
+      color: #0b5d3b;
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #00e676, #00d4ff);
+      color: #003314;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 15px rgba(0, 230, 118, 0.3);
+    }
+
+    .auth-btn:hover, .auth-btn:focus-visible {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 20px rgba(0, 230, 118, 0.5);
+      outline: 2px solid #00e676;
+      outline-offset: 3px;
+    }
+
+    .bottom-text {
+      margin-top: 25px;
+      color: #1e3d2f;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand-logo">
+      <i class="fa-solid fa-capsules"></i>
+      <div><span class="logo-endo">Endo</span><span class="logo-vision">Vision</span></div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <a href="/login" class="btn-login">Login</a>
+      <a href="/register" class="btn-register">Register</a>
+      <a href="/dashboard" class="btn-login">Dashboard</a>
+    </div>
+  </header>
+
+  <div class="auth-container">
+      <div class="auth-card fade-in-section">
+          <div class="auth-icon">
+              <i class="fa-solid fa-notes-medical"></i>
+          </div>
+
+          <h2>EndoVision Portal</h2>
+          <p>Secure Medical Diagnostic Access</p>
+
+          <form>
+              <div class="input-box">
+                  <i class="fa-solid fa-user-doctor"></i>
+                  <input type="text" placeholder="Doctor ID / Staff ID">
+              </div>
+
+              <div class="input-box">
+                  <i class="fa-solid fa-lock"></i>
+                  <input type="password" placeholder="Password">
+              </div>
+
+              <div class="auth-options">
+                  <label>
+                      <input type="checkbox"> Remember Me
+                  </label>
+                  <a href="#">Forgot Password?</a>
+              </div>
+
+              <button type="submit" class="auth-btn">Secure Login</button>
+          </form>
+
+          <div class="bottom-text">
+              New medical staff? <a href="/register">Create Account</a>
+          </div>
+      </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('show');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      const hiddenElements = document.querySelectorAll('.fade-in-section');
+      hiddenElements.forEach((el) => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
