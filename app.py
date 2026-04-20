@@ -81,14 +81,13 @@ def model_predict(img_path):
 
 # Routes
 @app.route("/")
-@app.route("/home")
 def home():
     return render_template('home.html')
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('predict'))
+        return redirect(url_for('register'))
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
@@ -104,7 +103,7 @@ def register():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('predict'))
+        return redirect(url_for('home'))  # ✅ pehle se sahi hai
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -112,7 +111,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user, remember=request.form.get('remember'))
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('predict'))
+            return redirect(next_page) if next_page else redirect(url_for('home'))  # ✅ 'predict' → 'home'
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html')
@@ -166,6 +165,11 @@ def predict():
 def history():
     user_history = ImageHistory.query.filter_by(user_id=current_user.id).order_by(ImageHistory.date_uploaded.desc()).all()
     return render_template('history.html', history=user_history)
+
+# @app.route('/dashboard')
+# @login_required
+# def dashboard():
+#     return render_template('dashboard.html')
 
 if __name__ == '__main__':
     with app.app_context():
