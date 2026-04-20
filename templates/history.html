@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EndoVision - History</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f4fff8;
+      color: #1e3d2f;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0b5d3b, #2e8b57);
+      color: white;
+      padding: 20px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-logo i {
+      font-size: 32px;
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 10px rgba(0, 230, 118, 0.4));
+      transform: rotate(-10deg);
+    }
+
+    .logo-endo {
+      color: white;
+    }
+
+    .logo-vision {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: #00e676;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    nav ul li a:hover {
+      color: #00e676;
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-weight: 500;
+    }
+
+    .user-info i {
+      font-size: 20px;
+    }
+
+    .btn-logout {
+      text-decoration: none;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.5);
+      color: white;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: white;
+    }
+
+    .history-hero {
+      background: linear-gradient(to right, rgba(2, 20, 10, 0.92), rgba(11, 70, 40, 0.75)),
+      url('{{ url_for("static", filename="images/hero_capsule_bg.png") }}');
+      background-size: cover;
+      background-position: center;
+      padding: 60px 8%;
+      text-align: center;
+      color: white;
+    }
+
+    .history-hero h2 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .history-hero p {
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+
+    .history-section {
+      padding: 60px 8%;
+      min-height: 60vh;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .history-title {
+      font-size: 36px;
+      color: #0b5d3b;
+    }
+
+    .history-title .highlight {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00e676, #00d4ff);
+      color: #003314;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 230, 118, 0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 230, 118, 0.5);
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    .history-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      border-bottom: 4px solid #00e676;
+    }
+
+    .history-card.normal {
+      border-bottom-color: #00e676;
+    }
+
+    .history-card.ulcer {
+      border-bottom-color: #f59e0b;
+    }
+
+    .history-card.avm {
+      border-bottom-color: #ef4444;
+    }
+
+    .history-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    .history-img-container {
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .history-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .history-card:hover .history-img-container img {
+      transform: scale(1.08);
+    }
+
+    .history-details {
+      padding: 20px;
+    }
+
+    .history-badge {
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .history-badge.normal {
+      background: rgba(0, 230, 118, 0.1);
+      color: #00e676;
+    }
+
+    .history-badge.ulcer {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .history-badge.avm {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .history-details h3 {
+      color: #0b5d3b;
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .history-conf {
+      color: #5a7d6a;
+      font-size: 14px;
+    }
+
+    .history-conf span {
+      color: #0b5d3b;
+      font-weight: 600;
+    }
+
+    .history-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .history-date {
+      color: #5a7d6a;
+      font-size: 13px;
+    }
+
+    .history-date i {
+      margin-right: 5px;
+      color: #0b5d3b;
+    }
+
+    .history-arrow {
+      color: #0b5d3b;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      background: white;
+      border-radius: 24px;
+      padding: 80px 40px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    .empty-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: linear-gradient(135deg, #0b5d3b, #2e8b57);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .empty-icon i {
+      font-size: 48px;
+      color: #00e676;
+    }
+
+    .empty-state h2 {
+      color: #0b5d3b;
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .empty-state p {
+      color: #5a7d6a;
+      max-width: 500px;
+      margin: 0 auto 30px;
+      line-height: 1.7;
+    }
+
+    .modern-footer {
+      background: #052b1b;
+      color: #c7f7d4;
+      padding: 40px 8% 20px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .footer-brand h3 {
+      font-size: 22px;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand p {
+      font-size: 14px;
+      color: #9cdbaf;
+    }
+
+    .footer-links h4, .footer-contact h4 {
+      font-size: 16px;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      color: #9cdbaf;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #00e676;
+    }
+
+    .footer-contact p {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .footer-contact i {
+      margin-right: 8px;
+      color: #00e676;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+      color: #6c9982;
+    }
+
+    @media(max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .history-hero h2 {
+        font-size: 32px;
+      }
+
+      .history-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+
+      .history-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand-logo">
+      <i class="fa-solid fa-capsules"></i>
+      <div><span class="logo-endo">Endo</span><span class="logo-vision">Vision</span></div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/predict">Predict</a></li>
+        <li><a href="/history">History</a></li>
+      </ul>
+    </nav>
+    <div class="user-menu">
+      <div class="user-info">
+        <i class="fa-solid fa-user-circle"></i>
+        <span>{{ current_user.username }}</span>
+      </div>
+      <a href="/logout" class="btn-logout">Logout</a>
+    </div>
+  </header>
+
+  <div class="history-hero">
+    <h2><i class="fa-solid fa-clock-rotate-left"></i> Clinical History</h2>
+    <p>View your past diagnostic analyses and track patient outcomes over time</p>
+  </div>
+
+  <section class="history-section">
+    <div class="history-header">
+      <h1 class="history-title">Clinical <span class="highlight">History</span></h1>
+      <a href="{{ url_for('predict') }}" class="btn-primary">New Analysis <i class="fa-solid fa-plus"></i></a>
+    </div>
+
+    {% if history %}
+    <div class="history-grid">
+      {% for item in history %}
+      <div class="history-card {{ item.prediction|lower }}">
+        <div class="history-img-container">
+          <img src="{{ url_for('static', filename='uploads/' + item.image_file) }}" alt="Diagnosis History Image">
+        </div>
+        <div class="history-details">
+          <div class="history-badge {{ item.prediction|lower }}">
+            {{ item.prediction | upper }}
+          </div>
+          <h3>Analysis #{{ loop.revindex }}</h3>
+          <p class="history-conf">Confidence Score: <span>{{ (item.confidence * 100) | round(2) }}%</span></p>
+          <div class="history-meta">
+            <p class="history-date"><i class="fa-regular fa-clock"></i> {{ item.date_uploaded.strftime('%b %d, %Y') }}</p>
+            <i class="fa-solid fa-chevron-right history-arrow"></i>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="fa-solid fa-folder-open"></i>
+      </div>
+      <h2>Archive is Empty</h2>
+      <p>Your diagnostic repository is currently unoccupied. Once you perform neural analyses on endoscopy images, they will be archived here for your longitudinal clinical review.</p>
+      <a href="{{ url_for('predict') }}" class="btn-primary">Initiate Primary Scan</a>
+    </div>
+    {% endif %}
+  </section>
+
+  <footer class="modern-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3><i class="fa-solid fa-capsules"></i> EndoVision</h3>
+        <p>AI-powered endoscopy image analysis for accurate diagnosis.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/predict">Predict</a></li>
+          <li><a href="/history">History</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fa-solid fa-envelope"></i> support@endovision.com</p>
+        <p><i class="fa-solid fa-phone"></i> +1 234 567 890</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 EndoVision. All rights reserved.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EndoVision - AI Based Ulcer Detection</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #f4fff8;
+      color: #1e3d2f;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0b5d3b, #2e8b57);
+      color: white;
+      padding: 20px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.02);
+    }
+
+    .brand-logo i {
+      font-size: 32px;
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 10px rgba(0, 230, 118, 0.4));
+      transform: rotate(-10deg);
+    }
+
+    .logo-endo {
+      color: white;
+    }
+
+    .logo-vision {
+      background: linear-gradient(135deg, #00d4ff, #00e676);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 25px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      position: relative;
+      padding-bottom: 5px;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: #00e676;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    nav ul li a:hover {
+      color: #00e676;
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-weight: 500;
+    }
+
+    .user-info i {
+      font-size: 20px;
+    }
+
+    .btn-logout {
+      text-decoration: none;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.5);
+      color: white;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: white;
+    }
+
+    .predict-hero {
+      background: linear-gradient(to right, rgba(2, 20, 10, 0.92), rgba(11, 70, 40, 0.75)),
+      url('{{ url_for("static", filename="images/hero_capsule_bg.png") }}');
+      background-size: cover;
+      background-position: center;
+      padding: 80px 8%;
+      text-align: center;
+      color: white;
+    }
+
+    .predict-hero h2 {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .predict-hero p {
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+
+    .predict-section {
+      padding: 60px 8%;
+      min-height: 60vh;
+    }
+
+    .upload-card {
+      background: white;
+      border-radius: 24px;
+      padding: 50px;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,230,118,0.1);
+    }
+
+    .upload-icon {
+      font-size: 60px;
+      color: #0b5d3b;
+      margin-bottom: 20px;
+    }
+
+    .upload-card h2 {
+      color: #0b5d3b;
+      margin-bottom: 10px;
+    }
+
+    .upload-card p {
+      color: #5a7d6a;
+      margin-bottom: 30px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      width: 100%;
+      padding: 50px 20px;
+      border: 2px dashed #0b5d3b;
+      border-radius: 16px;
+      background: #f4fff8;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-input-wrapper input[type="file"]:hover {
+      background: #eafbf0;
+      border-color: #00e676;
+    }
+
+    #preview-container {
+      display: none;
+      margin-top: 20px;
+    }
+
+    #image-preview {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 12px;
+      border: 2px solid #0b5d3b;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00e676, #00d4ff);
+      color: #003314;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 40px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 230, 118, 0.3);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 230, 118, 0.5);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      font-size: 18px;
+    }
+
+    #loader {
+      display: none;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .loader-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, #0b5d3b, #2e8b57);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .loader-icon i {
+      font-size: 40px;
+      color: #00e676;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(0, 230, 118, 0); }
+    }
+
+    .loader-text {
+      margin-top: 20px;
+      color: #0b5d3b;
+      font-weight: 600;
+      letter-spacing: 2px;
+    }
+
+    .result-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 700px;
+      margin: 0 auto;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+      border-top: 4px solid #00e676;
+    }
+
+    .result-card.normal {
+      border-top-color: #00e676;
+    }
+
+    .result-card.ulcer {
+      border-top-color: #f59e0b;
+    }
+
+    .result-card.avm {
+      border-top-color: #ef4444;
+    }
+
+    .result-image {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .result-image img {
+      max-width: 100%;
+      max-height: 350px;
+      border-radius: 16px;
+    }
+
+    .scan-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00e676, transparent);
+      box-shadow: 0 0 15px #00e676;
+      z-index: 5;
+      top: 0;
+      animation: scan 3s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    .result-info {
+      text-align: center;
+    }
+
+    .result-badge {
+      display: inline-block;
+      background: #f4fff8;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #0b5d3b;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .result-label {
+      color: #5a7d6a;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .result-value {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .result-value.normal {
+      color: #00e676;
+    }
+
+    .result-value.ulcer {
+      color: #f59e0b;
+    }
+
+    .result-value.avm {
+      color: #ef4444;
+    }
+
+    .confidence-section {
+      margin: 25px 0;
+    }
+
+    .confidence-bar-container {
+      background: #f4fff8;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+      margin: 15px 0;
+    }
+
+    .confidence-bar {
+      height: 100%;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .confidence-bar.normal {
+      background: linear-gradient(90deg, #00e676, #00d4ff);
+    }
+
+    .confidence-bar.ulcer {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+
+    .confidence-bar.avm {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+    }
+
+    .confidence-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .confidence-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #0b5d3b;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #0b5d3b;
+      border: 2px solid #0b5d3b;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #0b5d3b;
+      color: white;
+    }
+
+    .modern-footer {
+      background: #052b1b;
+      color: #c7f7d4;
+      padding: 40px 8% 20px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .footer-brand h3 {
+      font-size: 22px;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .footer-brand p {
+      font-size: 14px;
+      color: #9cdbaf;
+    }
+
+    .footer-links h4, .footer-contact h4 {
+      font-size: 16px;
+      color: white;
+      margin-bottom: 12px;
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      color: #9cdbaf;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #00e676;
+    }
+
+    .footer-contact p {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .footer-contact i {
+      margin-right: 8px;
+      color: #00e676;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 13px;
+      color: #6c9982;
+    }
+
+    @media(max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .predict-hero h2 {
+        font-size: 32px;
+      }
+
+      .upload-card, .result-card {
+        padding: 30px 20px;
+      }
+
+      .result-actions {
+        flex-direction: column;
+      }
+
+      .result-actions a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="brand-logo">
+      <i class="fa-solid fa-capsules"></i>
+      <div><span class="logo-endo">Endo</span><span class="logo-vision">Vision</span></div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/predict">Predict</a></li>
+        <li><a href="/history">History</a></li>
+      </ul>
+    </nav>
+    <div class="user-menu">
+      <div class="user-info">
+        <i class="fa-solid fa-user-circle"></i>
+        <span>{{ current_user.username }}</span>
+      </div>
+      <a href="/logout" class="btn-logout">Logout</a>
+    </div>
+  </header>
+
+  <div class="predict-hero">
+    <h2><i class="fa-solid fa-microscope"></i> AI Diagnostic Analysis</h2>
+    <p>Upload your endoscopy image for instant AI-powered classification</p>
+  </div>
+
+  <section class="predict-section">
+    {% if not prediction %}
+    <div class="upload-card">
+      <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+      <h2>Diagnostic Upload</h2>
+      <p>Supported formats: JPEG, PNG. Upload your endoscopy image for analysis.</p>
+
+      <form method="POST" enctype="multipart/form-data" id="prediction-form">
+        <div class="file-input-wrapper">
+          <input type="file" name="file" id="file" required accept="image/*">
+        </div>
+        <div id="preview-container">
+          <img id="image-preview" src="#" alt="Preview">
+        </div>
+        <button type="submit" class="btn-primary submit-btn">
+          Run Neural Analysis <i class="fa-solid fa-brain" style="margin-left: 10px;"></i>
+        </button>
+      </form>
+
+      <div id="loader">
+        <div class="loader-icon">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <p class="loader-text">ANALYZING PIXELS...</p>
+      </div>
+    </div>
+    {% else %}
+    <div class="result-card {{ prediction|lower }}">
+      <div class="result-image">
+        <div class="scan-line"></div>
+        <img src="{{ url_for('static', filename='uploads/' + image_file) }}" alt="Diagnosis Result">
+      </div>
+      <div class="result-info">
+        <div class="result-badge">ANALYSIS COMPLETE</div>
+        
+        <p class="result-label">Classification Result:</p>
+        <h2 class="result-value {{ prediction|lower }}">{{ prediction }}</h2>
+
+        <div class="confidence-section">
+          <p class="result-label">AI Confidence Level:</p>
+          <div class="confidence-bar-container">
+            <div class="confidence-bar {{ prediction|lower }}" style="width: {{ confidence }};"></div>
+          </div>
+          <p class="confidence-value">{{ confidence }}</p>
+        </div>
+
+        <div class="result-actions">
+          <a href="{{ url_for('predict') }}" class="btn-primary">
+            New Scan <i class="fa-solid fa-rotate-right" style="margin-left: 5px;"></i>
+          </a>
+          <a href="{{ url_for('history') }}" class="btn-secondary">
+            <i class="fa-solid fa-clock-rotate-left"></i> View History
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+
+  <footer class="modern-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3><i class="fa-solid fa-capsules"></i> EndoVision</h3>
+        <p>AI-powered endoscopy image analysis for accurate diagnosis.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="/home">Home</a></li>
+          <li><a href="/predict">Predict</a></li>
+          <li><a href="/history">History</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><i class="fa-solid fa-envelope"></i> support@endovision.com</p>
+        <p><i class="fa-solid fa-phone"></i> +1 234 567 890</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 EndoVision. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const fileInput = document.getElementById('file');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('image-preview');
+    const form = document.getElementById('prediction-form');
+    const loader = document.getElementById('loader');
+
+    if (fileInput) {
+      fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            previewImage.setAttribute('src', event.target.result);
+            previewContainer.style.display = 'block';
+          }
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', function () {
+        form.style.display = 'none';
+        loader.style.display = 'block';
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -318,25 +318,25 @@
           <h2>Create Account</h2>
           <p>Join the EndoVision Medical Portal</p>
 
-          <form>
+          <form method="POST">
               <div class="input-box">
                   <i class="fa-solid fa-user"></i>
-                  <input type="text" placeholder="Full Name">
+                  <input id="username" name="username" type="text" placeholder="User Name">
               </div>
 
               <div class="input-box">
                   <i class="fa-solid fa-envelope"></i>
-                  <input type="email" placeholder="Email Address">
+                  <input id="email" name="email" type="email" placeholder="Email Address">
               </div>
 
-              <div class="input-box">
+              <!-- <div class="input-box">
                   <i class="fa-solid fa-id-card"></i>
                   <input type="text" placeholder="Staff ID / Clinic ID">
-              </div>
+              </div> -->
 
               <div class="input-box">
                   <i class="fa-solid fa-lock"></i>
-                  <input type="password" placeholder="Create Password">
+                  <input id="password" name="password" type="password" placeholder="Create Password">
               </div>
 
               <button type="submit" class="auth-btn">Register Account</button>
